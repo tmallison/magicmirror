@@ -8,6 +8,7 @@ import datetime
 from settings import medium_text_size, small_text_size
 
 REFRESH_RATE = 1200000
+KEYWORD = ["a'dam", "amsterdam"]
 
 ns_credentials_user = "thomas68allison@hotmail.com"
 ns_credentials_password = "8ozlr3V3JfyM-_eLfwUEpLGp12AX9rCds0DoPnhmIAmCtlIedaS_Cw"
@@ -39,6 +40,7 @@ class NSFrame(Frame):
         self.trains_container = Frame(self, bg="black")
         self.trains_container.pack(side=TOP)
         self.display_all_delayed_trains()
+        # self.display_all_relevant_trains()
 
     def display_all_delayed_trains(self):
         try:
@@ -72,6 +74,33 @@ class NSFrame(Frame):
 
         self.after(REFRESH_RATE, self.display_all_delayed_trains)
 
+    def display_all_relevant_trains(self):
+        try:
+            # remove all children
+            for widget in self.trains_container.winfo_children():
+                widget.destroy()
+
+            all_relevant_trains = self.get_all_relevant_trains()
+
+            for train in all_relevant_trains[0:7]:
+                ns_info = DelayedTrainInfo(self.trains_container,
+                                            train.get("TreinSoort"),
+                                            train.get("EindBestemming"),
+                                            self.date_and_time_string_to_time(train["VertrekTijd"]),
+                                            train.get("VertrekVertragingTekst", ""))
+                ns_info.pack(side=TOP, anchor=W)
+
+            # todo if count is more than 5 add dots
+            if len(all_relevant_trains) > 7:
+                dots = GenericInfo(self.trains_container, "...")
+                dots.pack(side=TOP, anchor=W)
+
+        except Exception as e:
+            traceback.print_exc()
+            print("Error: %s. Cannot get NS info." % e)
+
+        self.after(REFRESH_RATE, self.display_all_delayed_trains)
+
     def get_all_delayed_trains(self):
         xml = self.get_ns_departure()
         delayed_trains = []
@@ -88,6 +117,23 @@ class NSFrame(Frame):
                 delayed_trains.append(train_dict)
 
         return delayed_trains
+
+    def get_all_relevant_trains(self):
+        xml = self.get_ns_departure()
+        relevant_trains = []
+
+        for train_info in xml:
+            train_dict = {}
+            add_to_list = False
+            for train in train_info:
+                train_dict[train.tag] = train.text
+                if any(w in train.text.lower() for w in KEYWORD):
+                    add_to_list = True
+
+            if add_to_list:
+                relevant_trains.append(train_dict)
+
+        return relevant_trains
 
     def get_ns_departure(self):
         url = 'https://webservices.ns.nl/ns-api-avt?station=LEDN'
