@@ -22,12 +22,18 @@ class DelayedTrainInfo(Frame):
         self.event_name_lbl = Label(self, text=self.event_name, font=('Helvetica', small_text_size), fg="white", bg="black")
         self.event_name_lbl.pack(side=LEFT, anchor=N)
 
+class GenericInfo(Frame):
+    def __init__(self, parent, text, text_size=small_text_size):
+        Frame.__init__(self, parent, bg='black')
+        self.event_name_lbl = Label(self, text=text, font=('Helvetica', text_size), fg="white", bg="black")
+        self.event_name_lbl.pack(side=LEFT, anchor=N)
+
 
 class NSFrame(Frame):
     def __init__(self, parent, *args, **kwargs):
         Frame.__init__(self, parent, *args, **kwargs)
         self.config(bg='black')
-        self.title = 'Vertraging Leiden Centraal'
+        self.title = 'Leiden Centraal'
         self.trains_lbl = Label(self, text=self.title, font=('Helvetica', medium_text_size), fg="white", bg="black")
         self.trains_lbl.pack(side=TOP, anchor=W)
         self.trains_container = Frame(self, bg="black")
@@ -52,6 +58,13 @@ class NSFrame(Frame):
 
             # todo if count is more than 5 add dots
             # todo if no delays show text
+            if len(delayed_trains) > 5:
+                dots = GenericInfo(self.trains_container, "...")
+                dots.pack(side=TOP, anchor=W)
+            elif len(delayed_trains) == 0:
+                dots = GenericInfo(self.trains_container, "Geen vertraging")
+                dots.pack(side=TOP, anchor=W)
+
             # todo time it updated
         except Exception as e:
             traceback.print_exc()
