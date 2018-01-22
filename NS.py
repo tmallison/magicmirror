@@ -23,6 +23,7 @@ class DelayedTrainInfo(Frame):
         self.event_name_lbl = Label(self, text=self.event_name, font=('Helvetica', small_text_size), fg="white", bg="black")
         self.event_name_lbl.pack(side=LEFT, anchor=N)
 
+
 class GenericInfo(Frame):
     def __init__(self, parent, text, text_size=small_text_size):
         Frame.__init__(self, parent, bg='black')

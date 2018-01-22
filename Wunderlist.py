@@ -3,15 +3,22 @@ import traceback
 from tkinter import *
 import requests
 
-from settings import medium_text_size, small_text_size
+from settings import medium_text_size, small_text_size, xsmall_text_size
 
 REFRESH_RATE = 60000
-
+MAX_TASKS = 7
 ACCESS_TOKEN = "332c08cb64ad807d265bea88765f20ec6c843f81882aa57228b60ee0ca49"
 CLIENT_ID = "8ea9ab3c56a5a558688a"
 HOME_LIST_ID = 327759681
 HEAD = {'X-Access-Token': ACCESS_TOKEN,
         'X-Client-ID': CLIENT_ID}
+
+
+class GenericFrame(Frame):
+    def __init__(self, parent, text, text_size=xsmall_text_size):
+        Frame.__init__(self, parent, bg='black')
+        self.task_lbl = Label(self, text="{}".format(text), font=('Helvetica', text_size), fg="white", bg="black")
+        self.task_lbl.pack(side=LEFT, anchor=N)
 
 
 class TaskFrame(Frame):
@@ -41,9 +48,13 @@ class WunderlistFrame(Frame):
             tasks = self.get_tasks_in_list(HOME_LIST_ID)
             print(tasks)
 
-            for task in tasks[0:10]:
+            for task in tasks[0:MAX_TASKS]:
                 task_frame = TaskFrame(self.wunderlist_container, task)
                 task_frame.pack(side=TOP, anchor=W)
+
+            if len(tasks) > MAX_TASKS:
+                dots = GenericFrame(self.wunderlist_container, "... {} other task(s)".format(len(tasks)-MAX_TASKS))
+                dots.pack(side=TOP, anchor=W)
 
         except Exception as e:
             traceback.print_exc()
