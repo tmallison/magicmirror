@@ -5,7 +5,7 @@ import requests
 
 from settings import medium_text_size, small_text_size
 
-REFRESH_RATE = 1200000
+REFRESH_RATE = 60000
 
 ACCESS_TOKEN = "332c08cb64ad807d265bea88765f20ec6c843f81882aa57228b60ee0ca49"
 CLIENT_ID = "8ea9ab3c56a5a558688a"
@@ -39,8 +39,9 @@ class WunderlistFrame(Frame):
                 widget.destroy()
 
             tasks = self.get_tasks_in_list(HOME_LIST_ID)
+            print(tasks)
 
-            for task in tasks[0:5]:
+            for task in tasks[0:10]:
                 task_frame = TaskFrame(self.wunderlist_container, task)
                 task_frame.pack(side=TOP, anchor=W)
 

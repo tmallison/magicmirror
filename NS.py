@@ -7,7 +7,7 @@ import datetime
 
 from settings import medium_text_size, small_text_size
 
-REFRESH_RATE = 1200000
+REFRESH_RATE = 120000
 KEYWORD = ["a'dam", "amsterdam"]
 
 ns_credentials_user = "thomas68allison@hotmail.com"
@@ -39,8 +39,8 @@ class NSFrame(Frame):
         self.trains_lbl.pack(side=TOP, anchor=W)
         self.trains_container = Frame(self, bg="black")
         self.trains_container.pack(side=TOP)
-        self.display_all_delayed_trains()
-        # self.display_all_relevant_trains()
+        # self.display_all_delayed_trains()
+        self.display_all_relevant_trains()
 
     def display_all_delayed_trains(self):
         try:
